@@ -1,0 +1,37 @@
+.navbar {
+  background: #6f55d8;
+  padding: 16px;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+.brand img {
+  width: 40px;
+}
+
+nav a {
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  nav a {
+    margin-left: 10px;
+    font-size: 14px;
+  }
+}
