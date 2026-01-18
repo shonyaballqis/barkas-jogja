@@ -1,42 +1,27 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../styles/auth.css";
 
-export default function Login() {
-  const navigate = useNavigate();
-
+export default function Register() {
   const [role, setRole] = useState("user");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
 
-    // validasi
     if (!email || !password) {
-      setError("Email dan password wajib diisi");
+      alert("Semua field wajib diisi");
       return;
     }
 
-    setError("");
-
-    // ===== LOGIN DUMMY + ROLE =====
-    if (role === "admin") {
-      localStorage.setItem("role", "admin");
-      alert("Login sebagai Admin");
-      navigate("/admin");
-    } else {
-      localStorage.setItem("role", "user");
-      alert("Login sebagai Pengguna");
-      navigate("/home");
-    }
+    alert("Akun berhasil dibuat");
   };
 
   return (
     <div className="auth-page">
-      <form className="auth-box" onSubmit={handleLogin}>
-        <img src="/logo.jpeg" alt="Logo" />
+      <form className="auth-box" onSubmit={handleRegister}>
+        <h2>Buat Akun</h2>
 
         <select value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="user">Pengguna</option>
@@ -57,13 +42,10 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {error && <p className="error">{error}</p>}
-
-        <button type="submit">Login</button>
+        <button type="submit">Daftar</button>
 
         <div className="auth-links">
-          <Link to="/register">Buat Akun</Link>
-          <Link to="/reset-password">Lupa Password?</Link>
+          <Link to="/">Kembali ke Login</Link>
         </div>
       </form>
     </div>
