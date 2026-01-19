@@ -1,0 +1,40 @@
+.navbar {
+  width: 100%;
+  height: 70px;
+  background-color: #f5f8f3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  border-bottom: 2px solid #dbe6d5;
+}
+
+/* KIRI */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.nav-title {
+  font-weight: 600;
+  color: #355e3b;
+}
+
+/* KANAN */
+.nav-right {
+  display: flex;
+  gap: 20px;
+  font-size: 20px;
+}
+
+.nav-right a {
+  text-decoration: none;
+  color: #355e3b;
+}
