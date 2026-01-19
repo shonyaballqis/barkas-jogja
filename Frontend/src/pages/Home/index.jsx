@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "../../styles/home.css";
 
 const PRODUCTS = [
@@ -45,7 +46,7 @@ export default function Home() {
       <section className="grid">
         {filteredProducts.map((item) => (
           <div className="card" key={item.id}>
-            <img src={item.img} />
+            <img src={item.img} alt={item.name} />
             <h4>{item.name}</h4>
             <p>{item.price}</p>
             <button className="cart">+ Keranjang</button>
@@ -53,14 +54,11 @@ export default function Home() {
         ))}
       </section>
 
-      {/* PROMOSI */}
+      {/* MULAI JUAL (SELLER FLOW) */}
       <div className="promo">
-        <a
-          href="https://wa.me/628xxxxxxxxxx"
-          target="_blank"
-        >
+        <Link to="/seller/register" className="promo-btn">
           Ingin Promosikan Barang Anda?
-        </a>
+        </Link>
       </div>
     </main>
   );

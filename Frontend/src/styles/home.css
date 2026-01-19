@@ -77,3 +77,12 @@
   border-radius: 20px;
   text-decoration: none;
 }
+
+.promo-btn {
+  padding: 12px 20px;
+  background: #5f7c5b;
+  color: white;
+  border-radius: 20px;
+  text-decoration: none;
+  display: inline-block;
+}
