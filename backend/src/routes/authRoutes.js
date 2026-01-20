@@ -1,12 +1,3 @@
-// // import express from "express";
-// // import { register, login } from "../Controllers/authController.js";
-// // const router = express.Router();
-
-// // router.post("/register", register);
-// // router.post("/login", login);
-
-// // export default router;
-
 import express from "express";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
@@ -26,14 +17,12 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1️⃣ Validasi input
     if (!name || !email || !password) {
       return res.status(400).json({
         message: "Name, email, dan password wajib diisi"
       });
     }
 
-    // 2️⃣ Validasi password
     if (!validatePassword(password)) {
       return res.status(400).json({
         message:
@@ -41,31 +30,26 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // 3️⃣ Cek email sudah terdaftar
     const [exist] = await db.execute(
       "SELECT user_id FROM users WHERE email = ?",
       [email]
     );
 
-    if (exist.length > 0) {
+    if (exist.length) {
       return res.status(400).json({
         message: "Email sudah terdaftar"
       });
     }
 
-    // 4️⃣ Hash password
     const hash = await bcrypt.hash(password, 10);
 
-    // 5️⃣ Simpan user
     const [result] = await db.execute(
-      `INSERT INTO users (name, email, password_hash)
-       VALUES (?, ?, ?)`,
+      `INSERT INTO users (name, email, password_hash, role)
+       VALUES (?, ?, ?, 'buyer')`,
       [name, email, hash]
     );
 
     const userId = result.insertId;
-
-    // 6️⃣ Buat token verifikasi
     const token = crypto.randomUUID();
 
     await db.execute(
@@ -74,28 +58,20 @@ router.post("/register", async (req, res) => {
       [userId, token]
     );
 
-    // 7️⃣ Kirim email verifikasi (TIDAK BOLEH GAGALKAN REGISTER)
     try {
-      const link = `http://localhost:3000/api/auth/verify-email?token=${token}`;
-
-      await sendEmail(
-        email,
-        "Verifikasi Email",
-        `Klik link berikut untuk verifikasi akun:\n\n${link}`
-      );
-    } catch (emailError) {
-      console.log("Email gagal dikirim:", emailError.message);
+      const link = `http://localhost:5000/api/auth/verify-email?token=${token}`;
+      await sendEmail(email, "Verifikasi Email", link);
+    } catch (err) {
+      console.log("Email gagal dikirim:", err.message);
     }
 
-    return res.status(201).json({
-      message: "Registrasi berhasil, silakan cek email untuk verifikasi"
+    res.status(201).json({
+      message: "Registrasi berhasil, silakan verifikasi email"
     });
 
   } catch (error) {
     console.error("REGISTER ERROR:", error);
-    return res.status(500).json({
-      message: "Server error"
-    });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -107,12 +83,6 @@ router.post("/register", async (req, res) => {
 router.get("/verify-email", async (req, res) => {
   try {
     const { token } = req.query;
-
-    if (!token) {
-      return res.status(400).json({
-        message: "Token tidak valid"
-      });
-    }
 
     const [rows] = await db.execute(
       `SELECT user_id FROM email_verifications
@@ -128,54 +98,46 @@ router.get("/verify-email", async (req, res) => {
 
     const userId = rows[0].user_id;
 
-    // Verifikasi user
     await db.execute(
-      `UPDATE users SET email_verified = true WHERE user_id = ?`,
+      "UPDATE users SET email_verified = TRUE WHERE user_id = ?",
       [userId]
     );
 
-    // Hapus token
     await db.execute(
-      `DELETE FROM email_verifications WHERE user_id = ?`,
+      "DELETE FROM email_verifications WHERE user_id = ?",
       [userId]
     );
 
-    return res.json({
-      message: "Email berhasil diverifikasi"
-    });
+    res.json({ message: "Email berhasil diverifikasi" });
 
   } catch (error) {
     console.error("VERIFY ERROR:", error);
-    return res.status(500).json({
-      message: "Server error"
-    });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /**
  * =========================
- * LOGIN
+ * LOGIN (FINAL & FIXED)
  * =========================
  */
 router.post("/login", async (req, res) => {
+
   try {
     const { email, password } = req.body;
 
-    // 1️⃣ Validasi input
     if (!email || !password) {
       return res.status(400).json({
         message: "Email dan password wajib diisi"
       });
     }
 
-    // 2️⃣ Cari user
     const [users] = await db.execute(
-  `SELECT user_id, role, password_hash, email_verified
-   FROM users
-   WHERE email = ?`,
-  [email]
-);
-
+      `SELECT user_id, name, email, role, password_hash, email_verified
+       FROM users
+       WHERE email = ?`,
+      [email]
+    );
 
     if (!users.length) {
       return res.status(404).json({
@@ -185,14 +147,12 @@ router.post("/login", async (req, res) => {
 
     const user = users[0];
 
-    // 3️⃣ Cek email sudah diverifikasi
     if (!user.email_verified) {
       return res.status(403).json({
         message: "Email belum diverifikasi"
       });
     }
 
-    // 4️⃣ Cek password
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
       return res.status(400).json({
@@ -200,32 +160,35 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // 5️⃣ Generate JWT
     const token = jwt.sign(
-  {
-    user_id: user.user_id,
-    role: user.role
-  },
-  process.env.JWT_SECRET,
-  { expiresIn: "1d" }
-);
+      {
+        user_id: user.user_id,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-
-
-    return res.json({
+    /**
+     * ⬅️ INI KUNCI UTAMA
+     * Frontend kamu butuh user object
+     */
+    res.json({
       message: "Login berhasil",
-      token
+      token,
+      user: {
+        user_id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
     });
 
   } catch (error) {
     console.error("LOGIN ERROR:", error);
-    return res.status(500).json({
-      message: "Server error"
-    });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 
-
 export default router;
-  
