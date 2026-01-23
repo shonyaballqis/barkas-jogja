@@ -37,7 +37,7 @@ export default function Router() {
       <Route
         path="/home"
         element={
-          <ProtectedRoute role="user">
+          <ProtectedRoute role="buyer">
             <Home />
           </ProtectedRoute>
         }
@@ -47,7 +47,7 @@ export default function Router() {
       <Route
         path="/seller/register"
         element={
-          <ProtectedRoute role="user">
+          <ProtectedRoute role="seller">
             <SellerRegister />
           </ProtectedRoute>
         }
