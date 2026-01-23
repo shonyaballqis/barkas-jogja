@@ -37,25 +37,25 @@ export default function Router() {
       <Route
         path="/home"
         element={
-          <ProtectedRoute role="buyer">
+          <ProtectedRoute>
             <Home />
           </ProtectedRoute>
         }
       />
 
-      {/* SELLER REGISTER */}
+      {/* USER → DAFTAR JADI SELLER */}
       <Route
         path="/seller/register"
         element={
-          <ProtectedRoute role="seller">
+          <ProtectedRoute>
             <SellerRegister />
           </ProtectedRoute>
         }
       />
 
-      {/* SELLER UPLOAD */}
+      {/* SELLER */}
       <Route
-        path="/seller/upload"
+        path="/seller/dashboard"
         element={
           <ProtectedRoute role="seller">
             <SellerUpload />
@@ -65,7 +65,7 @@ export default function Router() {
 
       {/* ADMIN */}
       <Route
-        path="/admin"
+        path="/admin/dashboard"
         element={
           <ProtectedRoute role="admin">
             <Admin />
