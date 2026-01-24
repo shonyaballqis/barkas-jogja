@@ -5,26 +5,19 @@ import Register from "../pages/Register";
 import ResetPassword from "../pages/ResetPassword";
 import Home from "../pages/Home";
 import Admin from "../pages/Admin";
-import SellerRegister from "../pages/SellerRegister";
-import SellerUpload from "../pages/SellerUpload";
-import SellerWaiting from "../pages/SellerWaiting";
+
+import SellerRegister from "../pages/seller/Register";
+import SellerWaiting from "../pages/seller/Waiting";
+import SellerDashboard from "../pages/seller/Dashboard";
+import SellerUpload from "../pages/seller/Upload";
 
 import ProtectedSeller from "./ProtectedSeller";
 
-/* ===== PROTECTOR LOGIN & ROLE ===== */
-function ProtectedRoute({ children, role }) {
-  const userRole = localStorage.getItem("role");
+/* ===== PROTECTOR LOGIN ===== */
+function ProtectedRoute({ children }) {
+  const role = localStorage.getItem("role");
 
-  // belum login
-  if (!userRole) {
-    return <Navigate to="/" replace />;
-  }
-
-  // role tidak sesuai
-  if (role && userRole !== role) {
-    return <Navigate to="/" replace />;
-  }
-
+  if (!role) return <Navigate to="/" replace />;
   return children;
 }
 
@@ -46,7 +39,7 @@ export default function Router() {
         }
       />
 
-      {/* USER → DAFTAR SELLER */}
+      {/* SELLER REGISTER */}
       <Route
         path="/seller/register"
         element={
@@ -71,6 +64,16 @@ export default function Router() {
         path="/seller/dashboard"
         element={
           <ProtectedSeller>
+            <SellerDashboard />
+          </ProtectedSeller>
+        }
+      />
+
+      {/* SELLER UPLOAD */}
+      <Route
+        path="/seller/upload"
+        element={
+          <ProtectedSeller>
             <SellerUpload />
           </ProtectedSeller>
         }
@@ -79,11 +82,7 @@ export default function Router() {
       {/* ADMIN */}
       <Route
         path="/admin/dashboard"
-        element={
-          <ProtectedRoute role="admin">
-            <Admin />
-          </ProtectedRoute>
-        }
+        element={<Admin />}
       />
     </Routes>
   );
