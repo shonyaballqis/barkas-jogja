@@ -7,8 +7,11 @@ import Home from "../pages/Home";
 import Admin from "../pages/Admin";
 import SellerRegister from "../pages/SellerRegister";
 import SellerUpload from "../pages/SellerUpload";
+import SellerWaiting from "../pages/SellerWaiting";
 
-/* ===== PROTECTOR ===== */
+import ProtectedSeller from "./ProtectedSeller";
+
+/* ===== PROTECTOR LOGIN & ROLE ===== */
 function ProtectedRoute({ children, role }) {
   const userRole = localStorage.getItem("role");
 
@@ -43,7 +46,7 @@ export default function Router() {
         }
       />
 
-      {/* USER → DAFTAR JADI SELLER */}
+      {/* USER → DAFTAR SELLER */}
       <Route
         path="/seller/register"
         element={
@@ -53,13 +56,23 @@ export default function Router() {
         }
       />
 
-      {/* SELLER */}
+      {/* SELLER WAITING */}
+      <Route
+        path="/seller/waiting"
+        element={
+          <ProtectedRoute>
+            <SellerWaiting />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* SELLER DASHBOARD */}
       <Route
         path="/seller/dashboard"
         element={
-          <ProtectedRoute role="seller">
+          <ProtectedSeller>
             <SellerUpload />
-          </ProtectedRoute>
+          </ProtectedSeller>
         }
       />
 

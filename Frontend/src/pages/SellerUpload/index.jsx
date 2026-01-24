@@ -1,75 +1,84 @@
-import { useState } from "react";
-import "../../styles/auth.css";
+import { useEffect, useState } from "react";
+import "./dashboard.css";
 
 export default function SellerUpload() {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [products, setProducts] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("products")) || [];
+    setProducts(saved);
+  }, []);
 
-    if (!name || !price || !category || !image) {
-      alert("Semua field wajib diisi");
-      return;
-    }
+  const categories = [...new Set(products.map(p => p.category))];
 
-    // SIMULASI SIMPAN PRODUK
-    const newProduct = {
-      id: Date.now(),
-      name,
-      price,
-      category,
-      image: URL.createObjectURL(image),
-    };
-
-    const products = JSON.parse(localStorage.getItem("products")) || [];
-    localStorage.setItem("products", JSON.stringify([...products, newProduct]));
-
-    alert("Produk berhasil diupload");
-
-    // reset
-    setName("");
-    setPrice("");
-    setCategory("");
-    setImage(null);
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
   };
 
   return (
-    <div className="auth-page">
-      <form className="auth-box" onSubmit={handleSubmit}>
-        <h2>Upload Produk</h2>
+    <div className="seller-layout">
+      {/* TOPBAR */}
+      <header className="topbar">
+        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+          ☰
+        </button>
+        <h3>Seller Dashboard</h3>
+        <div className="avatar">S</div>
+      </header>
 
-        <input
-          type="text"
-          placeholder="Nama Produk"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+      {/* SIDEBAR */}
+      {sidebarOpen && (
+        <aside className="sidebar">
+          <div className="sidebar-header">
+            <h4>Menu</h4>
+            <button onClick={() => setSidebarOpen(false)}>✕</button>
+          </div>
 
-        <input
-          type="text"
-          placeholder="Harga (contoh: Rp 50.000)"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
+          <ul>
+            <li className="active">📊 Dashboard</li>
+            <li>⬆ Upload Product</li>
+            <li>📦 My Products</li>
+            <li onClick={handleLogout}>🚪 Logout</li>
+          </ul>
+        </aside>
+      )}
 
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="">Pilih Kategori</option>
-          <option value="Pakaian">Pakaian</option>
-          <option value="Elektronik">Elektronik</option>
-          <option value="Sepatu">Sepatu</option>
-        </select>
+      {/* MAIN CONTENT */}
+      <main className="content">
+        <h1>Welcome, Seller 👋</h1>
+        <p className="subtitle">
+          Manage your products and track your business
+        </p>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
+        {/* STATS */}
+        <div className="stats">
+          <div className="card">
+            <p>Total Products</p>
+            <h2>{products.length}</h2>
+          </div>
 
-        <button type="submit">Upload Produk</button>
-      </form>
+          <div className="card">
+            <p>Product Categories</p>
+            <h2>{categories.length}</h2>
+          </div>
+
+          <div className="card">
+            <p>Status</p>
+            <h2 className="active">Active</h2>
+          </div>
+        </div>
+
+        {/* QUICK ACTION */}
+        <div className="quick">
+          <h3>Quick Actions</h3>
+          <div className="actions">
+            <button className="primary">Upload New Product</button>
+            <button>View All Products</button>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
