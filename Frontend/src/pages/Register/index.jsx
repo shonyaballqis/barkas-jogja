@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
+import { API_URL } from "../../api";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -8,8 +9,10 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -21,18 +24,15 @@ export default function Register() {
 
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          name,
-          email,
-          password
-        })
+        body: JSON.stringify({ name, email, password })
       });
 
       const data = await res.json();
@@ -42,8 +42,10 @@ export default function Register() {
         return;
       }
 
-      alert("Registrasi berhasil, silakan cek email untuk verifikasi");
-      navigate("/");
+      // ✅ SUCCESS STATE (TIDAK REDIRECT OTOMATIS)
+      setSuccess(
+        "Registrasi berhasil. Silakan cek email untuk verifikasi akun kamu."
+      );
 
     } catch (err) {
       setError("Tidak dapat terhubung ke server");
@@ -62,6 +64,7 @@ export default function Register() {
           placeholder="Nama"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={loading || success}
         />
 
         <input
@@ -69,6 +72,7 @@ export default function Register() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading || success}
         />
 
         <input
@@ -76,17 +80,27 @@ export default function Register() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={loading || success}
         />
 
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Loading..." : "Daftar"}
-        </button>
+        {!success ? (
+          <button type="submit" disabled={loading}>
+            {loading ? "Loading..." : "Daftar"}
+          </button>
+        ) : (
+          <button type="button" onClick={() => navigate("/")}>
+            Ke Halaman Login
+          </button>
+        )}
 
-        <div className="auth-links">
-          <Link to="/">Kembali ke Login</Link>
-        </div>
+        {!success && (
+          <div className="auth-links">
+            <Link to="/">Kembali ke Login</Link>
+          </div>
+        )}
       </form>
     </div>
   );

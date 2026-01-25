@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
+import { API_URL } from "../../api";
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,54 +23,54 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    /**
-     * =========================
-     * DUMMY LOGIN (FRONTEND)
-     * =========================
-     */
-    const dummyAccounts = [
-      {
-        email: "admin@barkas.com",
-        password: "admin123",
-        role: "admin"
-      },
-      {
-        email: "seller@barkas.com",
-        password: "seller123",
-        role: "seller"
-      },
-      {
-        email: "user@barkas.com",
-        password: "user123",
-        role: "buyer"
-      }
-    ];
+    // /**
+    //  * =========================
+    //  * DUMMY LOGIN (FRONTEND)
+    //  * =========================
+    //  */
+    // const dummyAccounts = [
+    //   {
+    //     email: "admin@barkas.com",
+    //     password: "admin123",
+    //     role: "admin"
+    //   },
+    //   {
+    //     email: "seller@barkas.com",
+    //     password: "seller123",
+    //     role: "seller"
+    //   },
+    //   {
+    //     email: "user@barkas.com",
+    //     password: "user123",
+    //     role: "buyer"
+    //   }
+    // ];
 
-    const dummyUser = dummyAccounts.find(
-      (u) => u.email === email && u.password === password
-    );
+    // const dummyUser = dummyAccounts.find(
+    //   (u) => u.email === email && u.password === password
+    // );
 
-    if (dummyUser) {
-      // SIMPAN AUTH DUMMY
-      localStorage.setItem("token", "dummy-token");
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ email: dummyUser.email, role: dummyUser.role })
-      );
-      localStorage.setItem("role", dummyUser.role);
+    // if (dummyUser) {
+    //   // SIMPAN AUTH DUMMY
+    //   localStorage.setItem("token", "dummy-token");
+    //   localStorage.setItem(
+    //     "user",
+    //     JSON.stringify({ email: dummyUser.email, role: dummyUser.role })
+    //   );
+    //   localStorage.setItem("role", dummyUser.role);
 
-      // REDIRECT SESUAI ROLE
-      if (dummyUser.role === "admin") {
-        navigate("/admin");
-      } else if (dummyUser.role === "seller") {
-        navigate("/seller/upload");
-      } else {
-        navigate("/home");
-      }
+    //   // REDIRECT SESUAI ROLE
+    //   if (dummyUser.role === "admin") {
+    //     navigate("/admin");
+    //   } else if (dummyUser.role === "seller") {
+    //     navigate("/seller/upload");
+    //   } else {
+    //     navigate("/home");
+    //   }
 
-      setLoading(false);
-      return;
-    }
+    //   setLoading(false);
+    //   return;
+    // }
 
     /**
      * =========================
@@ -76,7 +78,7 @@ export default function Login() {
      * =========================
      */
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -94,11 +96,12 @@ export default function Login() {
         setLoading(false);
         return;
       }
-
+    
+     // SIMPAN AUTH
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("role", data.user.role);
-
+      // REDIRECT SESUAI ROLE
       if (data.user.role === "admin") {
         navigate("/admin");
       } else if (data.user.role === "seller") {

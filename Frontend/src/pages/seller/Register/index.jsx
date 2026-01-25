@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/auth.css";
+import { API_URL } from "../../../api";
 
 export default function SellerRegister() {
   const navigate = useNavigate();
 
   const [shopName, setShopName] = useState("");
   const [ktpNumber, setKtpNumber] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!shopName || !ktpNumber) {
@@ -21,12 +23,43 @@ export default function SellerRegister() {
       return;
     }
 
-    // SIMULASI SUBMIT SELLER
-    localStorage.setItem("sellerStatus", "pending");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Silakan login terlebih dahulu");
+      navigate("/");
+      return;
+    }
 
-    alert("Pengajuan seller dikirim, menunggu verifikasi admin");
+    try {
+      setLoading(true);
 
-    navigate("/seller/waiting");
+      const res = await fetch(`${API_URL}/api/seller/apply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          store_name: shopName,
+          ktp_number: ktpNumber
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Gagal mengirim pengajuan");
+        return;
+      }
+
+      alert("Pengajuan seller berhasil dikirim, menunggu verifikasi admin");
+      navigate("/seller/waiting");
+
+    } catch (err) {
+      alert("Gagal terhubung ke server");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,7 +84,9 @@ export default function SellerRegister() {
           }
         />
 
-        <button type="submit">Kirim Pengajuan</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Mengirim..." : "Kirim Pengajuan"}
+        </button>
 
         <p style={{ fontSize: "12px", textAlign: "center" }}>
           Data akan diverifikasi oleh admin
