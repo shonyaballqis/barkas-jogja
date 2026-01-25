@@ -7,11 +7,19 @@ export default function SellerDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("products")) || [];
-    setProducts(data);
+    // ambil data produk dari backend
+    fetch("http://localhost:5000/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((err) => {
+        console.error("Gagal ambil produk:", err);
+      });
   }, []);
 
-  const categories = [...new Set(products.map(p => p.category))];
+  // hitung kategori unik
+  const categories = [...new Set(products.map((p) => p.category))];
 
   return (
     <div className="seller-layout">
@@ -53,7 +61,9 @@ export default function SellerDashboard() {
             >
               Upload New Product
             </button>
-            <button>View All Products</button>
+            <button onClick={() => navigate("/seller/products")}>
+              View All Products
+            </button>
           </div>
         </div>
       </main>

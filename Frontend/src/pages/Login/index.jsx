@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import "../../styles/auth.css";
 import { API_URL } from "../../api";
 
-
 export default function Login() {
   const navigate = useNavigate();
 
@@ -23,93 +22,39 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    // /**
-    //  * =========================
-    //  * DUMMY LOGIN (FRONTEND)
-    //  * =========================
-    //  */
-    // const dummyAccounts = [
-    //   {
-    //     email: "admin@barkas.com",
-    //     password: "admin123",
-    //     role: "admin"
-    //   },
-    //   {
-    //     email: "seller@barkas.com",
-    //     password: "seller123",
-    //     role: "seller"
-    //   },
-    //   {
-    //     email: "user@barkas.com",
-    //     password: "user123",
-    //     role: "buyer"
-    //   }
-    // ];
-
-    // const dummyUser = dummyAccounts.find(
-    //   (u) => u.email === email && u.password === password
-    // );
-
-    // if (dummyUser) {
-    //   // SIMPAN AUTH DUMMY
-    //   localStorage.setItem("token", "dummy-token");
-    //   localStorage.setItem(
-    //     "user",
-    //     JSON.stringify({ email: dummyUser.email, role: dummyUser.role })
-    //   );
-    //   localStorage.setItem("role", dummyUser.role);
-
-    //   // REDIRECT SESUAI ROLE
-    //   if (dummyUser.role === "admin") {
-    //     navigate("/admin");
-    //   } else if (dummyUser.role === "seller") {
-    //     navigate("/seller/upload");
-    //   } else {
-    //     navigate("/home");
-    //   }
-
-    //   setLoading(false);
-    //   return;
-    // }
-
-    /**
-     * =========================
-     * LOGIN KE BACKEND (ASLI)
-     * =========================
-     */
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          password
-        })
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         setError(data.message || "Login gagal");
-        setLoading(false);
         return;
       }
-    
-     // SIMPAN AUTH
+
+      // SIMPAN KE LOCAL STORAGE
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("role", data.user.role);
+      localStorage.setItem(
+        "sellerStatus",
+        data.user.status 
+      );
+
       // REDIRECT SESUAI ROLE
       if (data.user.role === "admin") {
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else if (data.user.role === "seller") {
-        navigate("/seller/upload");
+        navigate("/seller/dashboard");
       } else {
         navigate("/home");
       }
-
     } catch (err) {
       setError("Tidak dapat terhubung ke server");
     } finally {
