@@ -84,7 +84,7 @@ export default function SellerRequest() {
               </tr>
             ) : (
               requests.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.verification_id}>
                   <td>{item.name}</td>
                   <td>{item.email}</td>
                   <td>{item.store_name}</td>
@@ -96,13 +96,13 @@ export default function SellerRequest() {
                   <td>
                     <button
                       className="btn approve"
-                      onClick={() => handleApprove(item.id)}
+                      onClick={() => handleApprove(item.verification_id)}
                     >
                       Approve
                     </button>
                     <button
                       className="btn reject"
-                      onClick={() => handleReject(item.id)}
+                      onClick={() => handleReject(item.verification_id)}
                     >
                       Reject
                     </button>

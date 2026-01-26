@@ -30,7 +30,7 @@ router.get(
     try {
       const [rows] = await db.execute(`
         SELECT 
-          sv.id AS verification_id,
+          sv.verificaion_id AS verification_id,
           sv.user_id,
           u.name,
           u.email,
@@ -64,7 +64,7 @@ router.put(
       await connection.beginTransaction();
 
       const [[seller]] = await connection.execute(
-        "SELECT user_id FROM seller_verifications WHERE id = ? AND status = 'pending'",
+        "SELECT user_id FROM seller_verifications WHERE verification_id = ? AND status = 'pending'",
         [verificationId]
       );
 
@@ -74,7 +74,7 @@ router.put(
       }
 
       await connection.execute(
-        "UPDATE seller_verifications SET status = 'approved' WHERE id = ?",
+        "UPDATE seller_verifications SET status = 'approved' WHERE verificaion_id = ?",
         [verificationId]
       );
 
