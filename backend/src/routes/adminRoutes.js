@@ -30,7 +30,7 @@ router.get(
     try {
       const [rows] = await db.execute(`
         SELECT 
-          sv.verificaion_id AS verification_id,
+          sv.verification_id AS verification_id,
           sv.user_id,
           u.name,
           u.email,
