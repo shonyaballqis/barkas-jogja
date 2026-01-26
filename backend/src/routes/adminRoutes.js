@@ -74,7 +74,7 @@ router.put(
       }
 
       await connection.execute(
-        "UPDATE seller_verifications SET status = 'approved' WHERE verificaion_id = ?",
+        "UPDATE seller_verifications SET status = 'approved' WHERE verification_id = ?",
         [verificationId]
       );
 
