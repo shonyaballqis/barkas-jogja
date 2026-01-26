@@ -13,6 +13,14 @@ import SellerUpload from "../pages/seller/Upload";
 
 import ProtectedSeller from "./ProtectedSeller";
 
+import AdminLayout from "../pages/Admin/AdminLayout";
+import AdminDashboard from "../pages/Admin/Dashboard";
+import SellerRequest from "../pages/Admin/SellerRequest";
+import Users from "../pages/Admin/Users";
+import Products from "../pages/Admin/Products";
+import Transactions from "../pages/Admin/Transactions";
+import Dashboard from "../pages/Admin/Dashboard";
+
 /* ===== PROTECTOR LOGIN ===== */
 function ProtectedRoute({ children }) {
   const role = localStorage.getItem("role");
@@ -80,10 +88,14 @@ export default function Router() {
       />
 
       {/* ADMIN */}
-      <Route
-        path="/admin/dashboard"
-        element={<Admin />}
-      />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="seller-request" element={<SellerRequest />} />
+        <Route path="users" element={<Users />} />
+        <Route path="products" element={<Products />} />
+        <Route path="transactions" element={<Transactions />} />
+      </Route>
     </Routes>
   );
 }
