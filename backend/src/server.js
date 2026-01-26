@@ -51,7 +51,6 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("API RUNNING 🚀");
 });
-
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", forgotPasswordRoutes);
 
