@@ -22,11 +22,10 @@ const uploadProductImage = multer({
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
   fileFilter(req, file, cb) {
     if (!file.mimetype.startsWith("image/")) {
-      cb(new Error("File harus gambar"), false);
+      return cb(new Error("File harus gambar"), false);
     }
     cb(null, true);
   }
 });
-
 
 export default uploadProductImage;
