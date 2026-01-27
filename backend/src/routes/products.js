@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
 
 /**
  * ======================
- * GET PRODUCT DETAIL
+ * update PRODUCT DETAIL
  * ======================
  */
 router.post(

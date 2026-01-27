@@ -28,7 +28,7 @@ useEffect(() => {
       console.log("DETAIL PRODUCT:", data);
 
       if (res.ok) {
-        const product = data.product; // 🔥 PENTING
+        const product = data; // 🔥 PENTING
 
         setName(product.name);
         setDescription(product.description || "");
