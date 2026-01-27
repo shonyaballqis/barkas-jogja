@@ -11,7 +11,7 @@ export default function SellerEditProduct() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [stok, setStok] = useState("");
+  const [stock, setStock] = useState("");
   const [images, setImages] = useState([]);
 
   // ===== GET DETAIL PRODUK =====
@@ -30,7 +30,7 @@ export default function SellerEditProduct() {
           setName(data.name);
           setDescription(data.description || "");
           setPrice(data.price);
-          setStok(data.stok);
+          setStock(data.stock);
         }
       } catch (err) {
         console.error("Gagal ambil detail produk", err);
@@ -57,10 +57,10 @@ export default function SellerEditProduct() {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("price", price);
-    formData.append("stok", stok);
+    formData.append("stock", stock);
 
     images.forEach((img) => {
-      formData.append("image", img);
+      formData.append("images", img);
     });
 
     try {
@@ -114,11 +114,11 @@ export default function SellerEditProduct() {
               onChange={(e) => setPrice(e.target.value)}
             />
 
-            <label>Stok</label>
+            <label>Stock</label>
             <input
               type="number"
-              value={stok}
-              onChange={(e) => setStok(e.target.value)}
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
             />
 
             <label>Gambar Baru (opsional, max 5)</label>

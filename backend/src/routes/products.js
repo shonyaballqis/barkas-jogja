@@ -34,46 +34,25 @@ router.get("/", async (req, res) => {
  * GET PRODUCT DETAIL
  * ======================
  */
-router.get("/:id", async (req, res) => {
-  try {
-    const [product] = await db.execute(
-      `SELECT * FROM products
-       WHERE product_id = ? AND is_active = TRUE`,
-      [req.params.id]
-    );
-
-    if (product.length === 0) {
-      return res.status(404).json({ message: "Produk tidak ditemukan" });
-    }
-
-    const [images] = await db.execute(
-      `SELECT image_id, image_url, is_primary
-       FROM product_images
-       WHERE product_id = ?`,
-      [req.params.id]
-    );
-
-    res.json({
-      ...product[0],
-      images
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-/**
- * ======================
- * CREATE PRODUCT
- * seller & admin
- * ======================
- */
 router.post(
   "/",
   authMiddleware,
   roleMiddleware("seller", "admin"),
-  uploadProductImage.array("images", 5),
+
+  // 🔥 WRAPPER MULTER
+  (req, res, next) => {
+    uploadProductImage.array("images", 5)(req, res, err => {
+      if (err) {
+        console.error("MULTER ERROR:", err.message);
+        return res.status(400).json({
+          message: err.message
+        });
+      }
+      next();
+    });
+  },
+
+  // 🔥 CONTROLLER UTAMA
   async (req, res) => {
     try {
       const { name, description, price, category_id, condition, stock } = req.body;
@@ -125,7 +104,10 @@ router.post(
         }
       }
 
-      res.status(201).json({ message: "Produk berhasil ditambahkan" });
+      res.status(201).json({
+        message: "Produk berhasil ditambahkan"
+      });
+
     } catch (err) {
       console.error("CREATE PRODUCT ERROR:", err);
       res.status(500).json({ message: "Server error" });
@@ -144,6 +126,7 @@ router.put(
   authMiddleware,
   roleMiddleware("seller", "admin"),
   isProductOwner,
+  uploadProductImage.array("images", 5), // 🔥 TAMBAH INI
   async (req, res) => {
     try {
       const { name, description, price, stock } = req.body;
