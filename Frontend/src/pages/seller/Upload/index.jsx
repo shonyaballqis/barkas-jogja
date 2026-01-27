@@ -13,6 +13,7 @@ export default function SellerUpload() {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [images, setImages] = useState([]);
 
   const handleImageChange = (e) => {
@@ -29,7 +30,7 @@ export default function SellerUpload() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !price || !stock || !description || images.length === 0) {
+    if (!name || !price || !stock || !description || !categoryId || images.length === 0) {
       alert("Semua field wajib diisi");
       return;
     }
@@ -39,6 +40,8 @@ export default function SellerUpload() {
     formData.append("price",Number (price));
     formData.append("stock",Number (stock));
     formData.append("description", description);
+    formData.append("category_id", categoryId);
+
 
    images.forEach(img => {
     formData.append("images", img); // 🔥 SAMA DENGAN BACKEND
@@ -140,6 +143,19 @@ export default function SellerUpload() {
                 />
               </div>
             </div>
+        <div>
+  <label>Kategori</label>
+  <select
+    value={categoryId}
+    onChange={(e) => setCategoryId(e.target.value)}
+  >
+    <option value="">-- Pilih Kategori --</option>
+    <option value="1">Pakaian</option>
+    <option value="2">Elektronik</option>
+    <option value="3">Sepatu</option>
+  </select>
+</div>
+
 
             <label className="mt">Deskripsi Produk</label>
             <textarea
