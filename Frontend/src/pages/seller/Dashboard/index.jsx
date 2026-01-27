@@ -1,40 +1,85 @@
 import { useEffect, useState } from "react";
 import "./dashboard.css";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../../api";
 
 export default function SellerDashboard() {
-  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [showList, setShowList] = useState(false);
+
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const sellerName = user?.name || "Seller";
+
+  // ===== FETCH PRODUCTS =====
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/products/seller`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setProducts(Array.isArray(data) ? data : data.products || []);
+    } catch (err) {
+      console.error("Gagal ambil produk", err);
+    }
+  };
 
   useEffect(() => {
-    // ambil data produk dari backend
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch((err) => {
-        console.error("Gagal ambil produk:", err);
-      });
+    fetchProducts();
   }, []);
 
-  // hitung kategori unik
   const categories = [...new Set(products.map((p) => p.category))];
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
 
   return (
     <div className="seller-layout">
+      {/* TOPBAR */}
       <header className="topbar">
-        <button className="menu-btn">☰</button>
+        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+          ☰
+        </button>
         <h3>Seller Dashboard</h3>
-        <div className="avatar">S</div>
+        <div className="avatar">
+          {sellerName.charAt(0).toUpperCase()}
+        </div>
       </header>
 
+      {/* SIDEBAR */}
+      {sidebarOpen && (
+        <aside className="sidebar">
+          <div className="sidebar-header">
+            <h4>Menu</h4>
+            <button onClick={() => setSidebarOpen(false)}>✕</button>
+          </div>
+
+          <ul>
+            <li className="active">Dashboard</li>
+            <li onClick={() => navigate("/seller/upload")}>
+            Upload Product
+            </li>
+            <li onClick={() => setShowList(true)}>My Products</li>
+            <li onClick={handleLogout}>Logout</li>
+          </ul>
+        </aside>
+      )}
+
+      {/* CONTENT */}
       <main className="content">
-        <h1>Welcome, Seller 👋</h1>
+        <h1>Welcome, {sellerName} 👋</h1>
         <p className="subtitle">
           Manage your products and track your business
         </p>
 
+        {/* STATS */}
         <div className="stats">
           <div className="card">
             <p>Total Products</p>
@@ -52,8 +97,10 @@ export default function SellerDashboard() {
           </div>
         </div>
 
+        {/* QUICK ACTIONS */}
         <div className="quick">
           <h3>Quick Actions</h3>
+
           <div className="actions">
             <button
               className="primary"
@@ -61,10 +108,28 @@ export default function SellerDashboard() {
             >
               Upload New Product
             </button>
-            <button onClick={() => navigate("/seller/products")}>
+
+            <button onClick={() => setShowList(!showList)}>
               View All Products
             </button>
           </div>
+
+          {/* LIST PRODUK */}
+          {showList && (
+            <div style={{ marginTop: 20 }}>
+              {products.length === 0 ? (
+                <p>Belum ada produk</p>
+              ) : (
+                <ul>
+                  {products.map((p) => (
+                    <li key={p.id}>
+                      {p.name} — Rp {p.price}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>

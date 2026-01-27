@@ -10,10 +10,11 @@ import SellerRegister from "../pages/seller/Register";
 import SellerWaiting from "../pages/seller/Waiting";
 import SellerDashboard from "../pages/seller/Dashboard";
 import SellerUpload from "../pages/seller/Upload";
+import SellerProducts from "../pages/seller/Products"; 
 
 import ProtectedSeller from "./ProtectedSeller";
 
-/* ===== PROTECTOR LOGIN ===== */
+/* PROTECTOR LOGIN */
 function ProtectedRoute({ children }) {
   const role = localStorage.getItem("role");
 
@@ -79,11 +80,18 @@ export default function Router() {
         }
       />
 
-      {/* ADMIN */}
+      {/* SELLER PRODUCTS */}
       <Route
-        path="/admin/dashboard"
-        element={<Admin />}
+        path="/seller/products"
+        element={
+          <ProtectedSeller>
+            <SellerProducts />
+          </ProtectedSeller>
+        }
       />
+
+      {/* ADMIN */}
+      <Route path="/admin/dashboard" element={<Admin />} />
     </Routes>
   );
 }
