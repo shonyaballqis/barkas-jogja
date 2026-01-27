@@ -89,7 +89,7 @@ export default function Router() {
 
       {/* ADMIN */}
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
+        <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="seller-request" element={<SellerRequest />} />
         <Route path="users" element={<Users />} />
