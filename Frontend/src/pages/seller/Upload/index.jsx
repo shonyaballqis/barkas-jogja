@@ -11,7 +11,7 @@ export default function SellerUpload() {
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [stok, setStok] = useState("");
+  const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
 
@@ -29,20 +29,20 @@ export default function SellerUpload() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !price || !stok || !description || images.length === 0) {
+    if (!name || !price || !stock || !description || images.length === 0) {
       alert("Semua field wajib diisi");
       return;
     }
 
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("price", price);
-    formData.append("stok", stok);
+    formData.append("price",Number (price));
+    formData.append("stock",Number (stock));
     formData.append("description", description);
 
-    images.forEach((img) => {
-      formData.append("image", img);
-    });
+   images.forEach(img => {
+    formData.append("images", img); // 🔥 SAMA DENGAN BACKEND
+  });
 
     try {
       const res = await fetch(`${API_URL}/api/products`, {
@@ -131,12 +131,12 @@ export default function SellerUpload() {
               </div>
 
               <div>
-                <label>Stok</label>
+                <label>Stock</label>
                 <input
                   type="number"
-                  placeholder="Jumlah stok"
-                  value={stok}
-                  onChange={(e) => setStok(e.target.value)}
+                  placeholder="Jumlah stock"
+                  value={stock}
+                  onChange={(e) => setStock(e.target.value)}
                 />
               </div>
             </div>
