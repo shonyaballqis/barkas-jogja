@@ -1,35 +1,32 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
+/* AUTH & USER */
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ResetPassword from "../pages/ResetPassword";
 import Home from "../pages/Home";
-import Admin from "../pages/Admin";
 
+/* SELLER */
 import SellerRegister from "../pages/seller/Register";
 import SellerWaiting from "../pages/seller/Waiting";
 import SellerDashboard from "../pages/seller/Dashboard";
 import SellerUpload from "../pages/seller/Upload";
-import SellerProducts from "../pages/seller/Products"; 
+import SellerProducts from "../pages/seller/Products";
 
-import ProtectedSeller from "./ProtectedSeller";
-
-<<<<<<< HEAD
-/* PROTECTOR LOGIN */
-=======
+/* ADMIN */
 import AdminLayout from "../pages/Admin/AdminLayout";
 import AdminDashboard from "../pages/Admin/Dashboard";
 import SellerRequest from "../pages/Admin/SellerRequest";
 import Users from "../pages/Admin/Users";
 import Products from "../pages/Admin/Products";
 import Transactions from "../pages/Admin/Transactions";
-import Dashboard from "../pages/Admin/Dashboard";
+
+/* PROTECTOR */
+import ProtectedSeller from "./ProtectedSeller";
 
 /* ===== PROTECTOR LOGIN ===== */
->>>>>>> fe9618c8213fa52dca5f1ca73300a876b3a23e2d
 function ProtectedRoute({ children }) {
   const role = localStorage.getItem("role");
-
   if (!role) return <Navigate to="/" replace />;
   return children;
 }
@@ -37,12 +34,12 @@ function ProtectedRoute({ children }) {
 export default function Router() {
   return (
     <Routes>
-      {/* PUBLIC */}
+      {/* ===== PUBLIC ===== */}
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* USER */}
+      {/* ===== USER ===== */}
       <Route
         path="/home"
         element={
@@ -52,7 +49,7 @@ export default function Router() {
         }
       />
 
-      {/* SELLER REGISTER */}
+      {/* ===== SELLER ===== */}
       <Route
         path="/seller/register"
         element={
@@ -62,7 +59,6 @@ export default function Router() {
         }
       />
 
-      {/* SELLER WAITING */}
       <Route
         path="/seller/waiting"
         element={
@@ -72,7 +68,6 @@ export default function Router() {
         }
       />
 
-      {/* SELLER DASHBOARD */}
       <Route
         path="/seller/dashboard"
         element={
@@ -82,7 +77,6 @@ export default function Router() {
         }
       />
 
-      {/* SELLER UPLOAD */}
       <Route
         path="/seller/upload"
         element={
@@ -92,8 +86,6 @@ export default function Router() {
         }
       />
 
-<<<<<<< HEAD
-      {/* SELLER PRODUCTS */}
       <Route
         path="/seller/products"
         element={
@@ -103,17 +95,15 @@ export default function Router() {
         }
       />
 
-      
-      {/* ADMIN */}
+      {/* ===== ADMIN ===== */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="seller-request" element={<SellerRequest />} />
         <Route path="users" element={<Users />} />
         <Route path="products" element={<Products />} />
         <Route path="transactions" element={<Transactions />} />
       </Route>
->>>>>>> fe9618c8213fa52dca5f1ca73300a876b3a23e2d
     </Routes>
   );
 }
