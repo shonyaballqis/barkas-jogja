@@ -15,30 +15,34 @@ export default function SellerEditProduct() {
   const [images, setImages] = useState([]);
 
   // ===== GET DETAIL PRODUK =====
-  useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/products/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+useEffect(() => {
+  const fetchDetail = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const data = await res.json();
+      const data = await res.json();
+      console.log("DETAIL PRODUCT:", data);
 
-        if (res.ok) {
-          setName(data.name);
-          setDescription(data.description || "");
-          setPrice(data.price);
-          setStock(data.stock);
-        }
-      } catch (err) {
-        console.error("Gagal ambil detail produk", err);
+      if (res.ok) {
+        const product = data.product; // 🔥 PENTING
+
+        setName(product.name);
+        setDescription(product.description || "");
+        setPrice(product.price);
+        setStock(product.stock);
       }
-    };
+    } catch (err) {
+      console.error("Gagal ambil detail produk", err);
+    }
+  };
 
-    fetchDetail();
-  }, [id]);
+  fetchDetail();
+}, [id, token]);
+
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
