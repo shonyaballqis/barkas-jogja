@@ -269,4 +269,36 @@ router.put(
   }
 );
 
+/**
+ * ======================
+ * GET PRODUCTS (SELLER)
+ * ======================
+ */
+router.get(
+  "/seller",
+  authMiddleware,
+  roleMiddleware("seller", "admin"),
+  async (req, res) => {
+    try {
+      const userId = req.user.user_id;
+
+      const [rows] = await db.execute(
+        `SELECT *
+         FROM products
+         WHERE user_id = ?
+           AND is_active = TRUE
+           AND expired_at > NOW()
+         ORDER BY created_at DESC`,
+        [userId]
+      );
+
+      res.json(rows);
+    } catch (err) {
+      console.error("GET SELLER PRODUCTS ERROR:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+
 export default router;

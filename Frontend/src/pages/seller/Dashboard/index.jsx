@@ -122,7 +122,7 @@ export default function SellerDashboard() {
               ) : (
                 <ul>
                   {products.map((p) => (
-                    <li key={p.id}>
+                    <li key={p.product_id}>
                       {p.name} — Rp {p.price}
                     </li>
                   ))}
