@@ -1,40 +1,54 @@
-/* RESET RINGAN */
+/* =========================================================
+   RESET
+========================================================= */
 * {
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
 }
 
-/* ===== LAYOUT ===== */
-.admin-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f5f7fa;
-}
 
+/* =========================================================
+   LAYOUT UTAMA
+========================================================= */
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #f5f6fa;
 }
 
 .admin-content {
   flex: 1;
-  padding: 24px;
-  margin-left: 220px; /* SESUAI LEBAR SIDEBAR */
-  background: #f5f6fa;
-  color: #1f2937;
+  padding: 32px;
 }
 
-/* ===== SIDEBAR ===== */
+.admin-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   SIDEBAR (AKTIF - DARK)
+========================================================= */
 .sidebar {
-  width: 220px;
+  width: 240px;
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   background: #111827;
+  transition: 0.3s;
 }
 
+.sidebar.hide {
+  width: 0;
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   SIDEBAR (VERSI LAMA / ALTERNATIF - JANGAN DIHAPUS)
+   ⚠️ dipertahankan biar desain tidak berubah kalau masih dipakai
+========================================================= */
 .admin-sidebar {
   width: 240px;
   background: #ffffff;
@@ -68,13 +82,10 @@
   color: #2f855a;
 }
 
-/* ===== CONTENT ===== */
-.admin-content {
-  flex: 1;
-  padding: 32px;
-}
 
-/* ===== DASHBOARD ===== */
+/* =========================================================
+   DASHBOARD / CONTENT
+========================================================= */
 .admin-content h1 {
   font-size: 24px;
   font-weight: 700;
@@ -82,7 +93,10 @@
   color: #111827;
 }
 
-/* ===== STAT CARD ===== */
+
+/* =========================================================
+   STAT CARD
+========================================================= */
 .stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -94,7 +108,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .card span {
@@ -109,13 +123,16 @@
   color: #111827;
 }
 
-/* ===== SELLER REQUEST ===== */
+
+/* =========================================================
+   SELLER REQUEST / LIST CARD
+========================================================= */
 .request-card {
   background: #ffffff;
   padding: 18px;
   border-radius: 12px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .request-card p {
@@ -137,6 +154,10 @@
   background: #276749;
 }
 
+
+/* =========================================================
+   TABLE
+========================================================= */
 .table-card {
   background: white;
   border-radius: 14px;
@@ -160,6 +181,10 @@ td {
   border-top: 1px solid #e5e7eb;
 }
 
+
+/* =========================================================
+   BADGE & BUTTON
+========================================================= */
 .badge {
   padding: 4px 10px;
   border-radius: 20px;
@@ -188,3 +213,15 @@ td {
   background: #dc2626;
   color: white;
 }
+
+
+/* =========================================================
+   HAMBURGER BUTTON
+========================================================= */
+/* .hamburger-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+} */

@@ -6,7 +6,7 @@ export default function Sidebar() {
       <h2 className="admin-logo">Admin Panel</h2>
 
       <nav>
-        <NavLink to="/admin" end>Dashboard</NavLink>
+        <NavLink to="/admin/dashboard" end>Dashboard</NavLink>
         <NavLink to="/admin/seller-request">Permintaan Seller</NavLink>
         <NavLink to="/admin/users">Pengguna</NavLink>
         <NavLink to="/admin/products">Produk</NavLink>
