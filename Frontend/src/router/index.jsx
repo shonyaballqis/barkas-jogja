@@ -11,7 +11,8 @@ import SellerRegister from "../pages/seller/Register";
 import SellerWaiting from "../pages/seller/Waiting";
 import SellerDashboard from "../pages/seller/Dashboard";
 import SellerUpload from "../pages/seller/Upload";
-import SellerProducts from "../pages/seller/Products";
+import SellerProducts from "../pages/seller/Products/index";
+import SellerEditProduct from "../pages/seller/Products/Editproduk"; 
 
 /* ADMIN */
 import AdminLayout from "../pages/Admin/AdminLayout";
@@ -86,11 +87,22 @@ export default function Router() {
         }
       />
 
+      {/* ===== MY PRODUCTS ===== */}
       <Route
         path="/seller/products"
         element={
           <ProtectedSeller>
             <SellerProducts />
+          </ProtectedSeller>
+        }
+      />
+
+      
+      <Route
+        path="/seller/products/edit/:id"
+        element={
+          <ProtectedSeller>
+            <SellerEditProduct />
           </ProtectedSeller>
         }
       />

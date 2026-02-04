@@ -7,7 +7,6 @@ export default function SellerDashboard() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [products, setProducts] = useState([]);
-  const [showList, setShowList] = useState(false);
 
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
@@ -37,7 +36,7 @@ export default function SellerDashboard() {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = "/";
+    navigate("/");
   };
 
   return (
@@ -63,10 +62,25 @@ export default function SellerDashboard() {
 
           <ul>
             <li className="active">Dashboard</li>
-            <li onClick={() => navigate("/seller/upload")}>
-            Upload Product
+
+            <li
+              onClick={() => {
+                navigate("/seller/upload");
+                setSidebarOpen(false);
+              }}
+            >
+              Upload Product
             </li>
-            <li onClick={() => setShowList(true)}>My Products</li>
+
+            <li
+              onClick={() => {
+                navigate("/seller/products");
+                setSidebarOpen(false);
+              }}
+            >
+              My Products
+            </li>
+
             <li onClick={handleLogout}>Logout</li>
           </ul>
         </aside>
@@ -109,41 +123,10 @@ export default function SellerDashboard() {
               Upload New Product
             </button>
 
-            <button onClick={() => setShowList(!showList)}>
+            <button onClick={() => navigate("/seller/products")}>
               View All Products
             </button>
           </div>
-
-          {/* LIST PRODUK */}
-         {showList && (
-  <div className="product-grid">
-    {products.length === 0 ? (
-      <p>Belum ada produk</p>
-    ) : (
-      products.map((p) => (
-        <div className="product-card" key={p.product_id}>
-          <img
-            src={
-              p.image_url
-                ? `${API_URL}${p.image_url}`
-                : "/no-image.png"
-            }
-            alt={p.name}
-            className="product-image"
-          />
-
-          <h4>{p.name}</h4>
-
-          <p className="price">Rp {p.price}</p>
-
-          {p.description && (
-            <p className="description">{p.description}</p>
-          )}
-        </div>
-      ))
-    )}
-  </div>
-)}
         </div>
       </main>
     </div>
