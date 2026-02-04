@@ -280,21 +280,26 @@ router.get(
   roleMiddleware("seller", "admin"),
   async (req, res) => {
     try {
-      const userId = req.user.user_id;
-
       const [rows] = await db.execute(
-        `SELECT *
-         FROM products
-         WHERE user_id = ?
-           AND is_active = TRUE
-           AND expired_at > NOW()
-         ORDER BY created_at DESC`,
-        [userId]
+        `
+        SELECT 
+          p.*,
+          pi.image_url
+        FROM products p
+        LEFT JOIN product_images pi
+          ON p.product_id = pi.product_id
+          AND pi.is_primary = 1
+        WHERE p.user_id = ?
+          AND p.is_active = 1
+          AND p.expired_at > NOW()
+        ORDER BY p.created_at DESC
+        `,
+        [req.user.user_id]
       );
 
       res.json(rows);
     } catch (err) {
-      console.error("GET SELLER PRODUCTS ERROR:", err);
+      console.error(err);
       res.status(500).json({ message: "Server error" });
     }
   }

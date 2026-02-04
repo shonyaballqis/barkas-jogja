@@ -12,7 +12,7 @@ export default async function isProductOwner(req, res, next) {
     }
 
     const [rows] = await db.execute(
-      "SELECT seller_id FROM products WHERE id = ?",
+      "SELECT user_id FROM products WHERE product_id = ?",
       [productId]
     );
 
@@ -20,7 +20,7 @@ export default async function isProductOwner(req, res, next) {
       return res.status(404).json({ message: "Produk tidak ditemukan" });
     }
 
-    if (rows[0].seller_id !== userId) {
+    if (rows[0].user_id !== userId) {
       return res.status(403).json({
         message: "Tidak boleh mengubah produk seller lain"
       });

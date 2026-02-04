@@ -115,21 +115,35 @@ export default function SellerDashboard() {
           </div>
 
           {/* LIST PRODUK */}
-          {showList && (
-            <div style={{ marginTop: 20 }}>
-              {products.length === 0 ? (
-                <p>Belum ada produk</p>
-              ) : (
-                <ul>
-                  {products.map((p) => (
-                    <li key={p.product_id}>
-                      {p.name} — Rp {p.price}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+         {showList && (
+  <div className="product-grid">
+    {products.length === 0 ? (
+      <p>Belum ada produk</p>
+    ) : (
+      products.map((p) => (
+        <div className="product-card" key={p.product_id}>
+          <img
+            src={
+              p.image_url
+                ? `${API_URL}${p.image_url}`
+                : "/no-image.png"
+            }
+            alt={p.name}
+            className="product-image"
+          />
+
+          <h4>{p.name}</h4>
+
+          <p className="price">Rp {p.price}</p>
+
+          {p.description && (
+            <p className="description">{p.description}</p>
           )}
+        </div>
+      ))
+    )}
+  </div>
+)}
         </div>
       </main>
     </div>

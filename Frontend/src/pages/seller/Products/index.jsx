@@ -54,40 +54,40 @@ useEffect(() => {
   };
 
   // ===== UPDATE PRODUCT =====
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("price", price);
-    formData.append("stock", stock);
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("price", price);
+  formData.append("stock", stock);
 
-    images.forEach((img) => {
-      formData.append("images", img);
+  images.forEach((img) => {
+    formData.append("images", img);
+  });
+
+  try {
+    const res = await fetch(`${API_URL}/api/products/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
     });
 
-    try {
-      const res = await fetch(`${API_URL}/api/products/${id}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (res.ok) {
-        alert("Produk berhasil diupdate");
-        navigate("/seller/dashboard");
-      } else {
-        alert("Gagal update produk");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Server error");
+    if (res.ok) {
+      alert("Produk berhasil diupdate");
+      navigate("/seller/dashboard");
+    } else {
+      const err = await res.json();
+      alert(err.message || "Gagal update produk");
     }
-  };
-
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+};
   return (
     <div className="seller-layout">
       {/* TOPBAR */}
