@@ -9,29 +9,73 @@ const router = express.Router();
 
 /**
  * ======================
+ * GET PRODUCTS (SELLER)  ✅ HARUS DI ATAS
+ * ======================
+ */
+router.get(
+  "/seller",
+  authMiddleware,
+  roleMiddleware("seller", "admin"),
+  async (req, res) => {
+    try {
+      const [rows] = await db.execute(
+        `
+        SELECT 
+          p.*,
+          pi.image_url
+        FROM products p
+        LEFT JOIN product_images pi
+          ON p.product_id = pi.product_id
+          AND pi.is_primary = 1
+        WHERE p.user_id = ?
+          AND p.is_active = 1
+          AND p.expired_at > NOW()
+        ORDER BY p.created_at DESC
+        `,
+        [req.user.user_id]
+      );
+
+      res.json(rows);
+    } catch (err) {
+      console.error("GET SELLER PRODUCTS ERROR:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/**
+ * ======================
  * GET PRODUCTS (PUBLIC)
  * ======================
  */
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT p.*, u.name AS seller_name
-       FROM products p
-       JOIN users u ON p.user_id = u.user_id
-       WHERE p.is_active = TRUE
-         AND p.expired_at > NOW()`
+      `
+      SELECT 
+        p.*,
+        u.name AS seller_name,
+        pi.image_url
+      FROM products p
+      JOIN users u ON p.user_id = u.user_id
+      LEFT JOIN product_images pi
+        ON p.product_id = pi.product_id
+        AND pi.is_primary = 1
+      WHERE p.is_active = 1
+        AND p.expired_at > NOW()
+      `
     );
 
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error("GET PRODUCTS ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 /**
  * ======================
- * update PRODUCT DETAIL
+ * CREATE PRODUCT
  * ======================
  */
 router.post(
@@ -39,23 +83,26 @@ router.post(
   authMiddleware,
   roleMiddleware("seller", "admin"),
 
-  // 🔥 WRAPPER MULTER
+  // 🔥 WRAPPER MULTER (AMAN)
   (req, res, next) => {
     uploadProductImage.array("images", 5)(req, res, err => {
       if (err) {
-        console.error("MULTER ERROR:", err.message);
-        return res.status(400).json({
-          message: err.message
-        });
+        return res.status(400).json({ message: err.message });
       }
       next();
     });
   },
 
-  // 🔥 CONTROLLER UTAMA
   async (req, res) => {
     try {
-      const { name, description, price, category_id, condition, stock } = req.body;
+      const {
+        name,
+        description,
+        price,
+        category_id,
+        condition,
+        stock
+      } = req.body;
 
       if (!name || !price || stock === undefined) {
         return res.status(400).json({
@@ -73,9 +120,11 @@ router.post(
       expiredAt.setDate(expiredAt.getDate() + 30);
 
       const [result] = await db.execute(
-        `INSERT INTO products
-         (user_id, name, description, price, category_id, product_condition, stock, expired_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `
+        INSERT INTO products
+        (user_id, name, description, price, category_id, product_condition, stock, expired_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `,
         [
           req.user.user_id,
           name,
@@ -93,8 +142,10 @@ router.post(
       if (req.files?.length) {
         for (let i = 0; i < req.files.length; i++) {
           await db.execute(
-            `INSERT INTO product_images (product_id, image_url, is_primary)
-             VALUES (?, ?, ?)`,
+            `
+            INSERT INTO product_images (product_id, image_url, is_primary)
+            VALUES (?, ?, ?)
+            `,
             [
               productId,
               `/uploads/products/${req.files[i].filename}`,
@@ -104,10 +155,7 @@ router.post(
         }
       }
 
-      res.status(201).json({
-        message: "Produk berhasil ditambahkan"
-      });
-
+      res.status(201).json({ message: "Produk berhasil ditambahkan" });
     } catch (err) {
       console.error("CREATE PRODUCT ERROR:", err);
       res.status(500).json({ message: "Server error" });
@@ -118,7 +166,6 @@ router.post(
 /**
  * ======================
  * UPDATE PRODUCT
- * seller (owner) & admin
  * ======================
  */
 router.put(
@@ -126,7 +173,7 @@ router.put(
   authMiddleware,
   roleMiddleware("seller", "admin"),
   isProductOwner,
-  uploadProductImage.array("images", 5), // 🔥 TAMBAH INI
+  uploadProductImage.array("images", 5),
   async (req, res) => {
     try {
       const { name, description, price, stock } = req.body;
@@ -156,7 +203,9 @@ router.put(
       }
 
       if (fields.length === 0) {
-        return res.status(400).json({ message: "Tidak ada data untuk diupdate" });
+        return res.status(400).json({
+          message: "Tidak ada data untuk diupdate"
+        });
       }
 
       values.push(req.params.id);
@@ -187,7 +236,7 @@ router.delete(
   async (req, res) => {
     try {
       await db.execute(
-        `UPDATE products SET is_active = FALSE WHERE product_id = ?`,
+        `UPDATE products SET is_active = 0 WHERE product_id = ?`,
         [req.params.id]
       );
 
@@ -201,7 +250,7 @@ router.delete(
 
 /**
  * ======================
- * UPLOAD ADDITIONAL IMAGES (MAX TOTAL 5)
+ * UPLOAD ADDITIONAL IMAGES
  * ======================
  */
 router.post(
@@ -225,8 +274,10 @@ router.post(
 
       for (const file of req.files) {
         await db.execute(
-          `INSERT INTO product_images (product_id, image_url)
-           VALUES (?, ?)`,
+          `
+          INSERT INTO product_images (product_id, image_url)
+          VALUES (?, ?)
+          `,
           [req.params.id, `/uploads/products/${file.filename}`]
         );
       }
@@ -252,12 +303,12 @@ router.put(
   async (req, res) => {
     try {
       await db.execute(
-        `UPDATE product_images SET is_primary = FALSE WHERE product_id = ?`,
+        `UPDATE product_images SET is_primary = 0 WHERE product_id = ?`,
         [req.params.productId]
       );
 
       await db.execute(
-        `UPDATE product_images SET is_primary = TRUE WHERE image_id = ?`,
+        `UPDATE product_images SET is_primary = 1 WHERE image_id = ?`,
         [req.params.imageId]
       );
 
@@ -268,42 +319,5 @@ router.put(
     }
   }
 );
-
-/**
- * ======================
- * GET PRODUCTS (SELLER)
- * ======================
- */
-router.get(
-  "/seller",
-  authMiddleware,
-  roleMiddleware("seller", "admin"),
-  async (req, res) => {
-    try {
-      const [rows] = await db.execute(
-        `
-        SELECT 
-          p.*,
-          pi.image_url
-        FROM products p
-        LEFT JOIN product_images pi
-          ON p.product_id = pi.product_id
-          AND pi.is_primary = 1
-        WHERE p.user_id = ?
-          AND p.is_active = 1
-          AND p.expired_at > NOW()
-        ORDER BY p.created_at DESC
-        `,
-        [req.user.user_id]
-      );
-
-      res.json(rows);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Server error" });
-    }
-  }
-);
-
 
 export default router;

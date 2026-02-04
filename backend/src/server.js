@@ -18,6 +18,7 @@ import dashboardRoutes from "./routes/dashboard.js";
 import searchRoutes from "./routes/search.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import reviewRoutes from "./routes/reviews.js";
+import path from "path";
 
 const app = express();
 
@@ -69,7 +70,10 @@ app.use("/api/reviews", reviewRoutes);
 /* =====================
    STATIC FILES
 ===================== */
-app.use("/uploads", express.static("public/uploads"));
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "public/uploads"))
+);
 
 /* =====================
    SERVER
