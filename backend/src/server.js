@@ -19,6 +19,9 @@ import searchRoutes from "./routes/search.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import reviewRoutes from "./routes/reviews.js";
 import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -72,7 +75,7 @@ app.use("/api/reviews", reviewRoutes);
 ===================== */
 app.use(
   "/uploads",
-  express.static(path.join(process.cwd(), "public/uploads"))
+  express.static(path.join(__dirname, "public/uploads"))
 );
 
 /* =====================

@@ -75,6 +75,47 @@ router.get("/", async (req, res) => {
 
 /**
  * ======================
+ * GET PRODUCT BY ID
+ * ======================
+ */
+router.get(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("seller", "admin"),
+  isProductOwner,
+  async (req, res) => {
+    try {
+      const [rows] = await db.execute(
+        `
+        SELECT 
+          p.*,
+          pi.image_url
+        FROM products p
+        LEFT JOIN product_images pi
+          ON p.product_id = pi.product_id
+          AND pi.is_primary = 1
+        WHERE p.product_id = ?
+        `,
+        [req.params.id]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({
+          message: "Produk tidak ditemukan"
+        });
+      }
+
+      res.json(rows[0]);
+    } catch (err) {
+      console.error("GET PRODUCT DETAIL ERROR:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+
+/**
+ * ======================
  * CREATE PRODUCT
  * ======================
  */
@@ -214,6 +255,28 @@ router.put(
         `UPDATE products SET ${fields.join(", ")} WHERE product_id = ?`,
         values
       );
+
+      // setelah UPDATE products
+if (req.files && req.files.length > 0) {
+  // hapus gambar lama (opsional tapi disarankan)
+  await db.execute(
+    "DELETE FROM product_images WHERE product_id = ?",
+    [req.params.id]
+  );
+
+  for (let i = 0; i < req.files.length; i++) {
+    await db.execute(
+      `INSERT INTO product_images (product_id, image_url, is_primary)
+       VALUES (?, ?, ?)`,
+      [
+        req.params.id,
+        `/uploads/products/${req.files[i].filename}`,
+        i === 0
+      ]
+    );
+  }
+}
+
 
       res.json({ message: "Produk berhasil diupdate" });
     } catch (err) {
