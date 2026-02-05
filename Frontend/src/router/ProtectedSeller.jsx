@@ -19,6 +19,6 @@ export default function ProtectedSeller({ children }) {
     return <Navigate to="/seller/waiting" replace />;
   }
 
-  // 🔥 sellerStatus = none / approved / verified
+  // sellerStatus = none / approved / verified
   return children;
 }

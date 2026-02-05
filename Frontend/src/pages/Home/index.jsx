@@ -1,65 +1,126 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import "../../styles/home.css";
-
-const PRODUCTS = [
-  { id: 1, name: "Galon", price: "Rp 20.000", category: "Elektronik", img: "https://via.placeholder.com/150" },
-  { id: 2, name: "Kemeja 5pcs", price: "Rp 125.000", category: "Pakaian", img: "https://via.placeholder.com/150" },
-  { id: 3, name: "Sepatu", price: "Rp 100.000", category: "Sepatu", img: "https://via.placeholder.com/150" },
-  { id: 4, name: "Tas", price: "Rp 80.000", category: "Pakaian", img: "https://via.placeholder.com/150" },
-];
+import { useEffect, useState } from "react";
+import "../Home/styles.css";
 
 export default function Home() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
+  const banners = [
+    "/banner-1.jpg",
+    "/banner-2.jpg",
+    "/banner-3.jpg",
+    "/banner-4.jpg",
+    "/banner-5.jpg",
+  ];
 
-  const filteredProducts = PRODUCTS.filter((item) => {
-    const matchSearch = item.name.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = category === "All" || item.category === category;
-    return matchSearch && matchCategory;
-  });
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % banners.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <main className="home">
-      {/* SEARCH */}
-      <input
-        className="search"
-        placeholder="Cari barang..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      {/* KATEGORI */}
-      <div className="category">
-        {["All", "Pakaian", "Elektronik", "Sepatu"].map((cat) => (
-          <button
-            key={cat}
-            className={category === cat ? "active" : ""}
-            onClick={() => setCategory(cat)}
+    <div className="home-page">
+      {/* ===== SECTION: HORIZONTAL HIGHLIGHT SLIDER ===== */}
+      <section className="home-slider">
+        <div className="slider-container">
+          
+          <div 
+            className="slider-track"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* PRODUK */}
-      <section className="grid">
-        {filteredProducts.map((item) => (
-          <div className="card" key={item.id}>
-            <img src={item.img} alt={item.name} />
-            <h4>{item.name}</h4>
-            <p>{item.price}</p>
-            <button className="cart">+ Keranjang</button>
+            {banners.map((img, index) => (
+            <div className="slider-card" key={index}>
+              <img src={img} alt={`Highlight ${index + 1}`} />
+              </div>
+            ))}
           </div>
-        ))}
+
+        {/* DOTS INDICATOR */}
+        <div className="slider-dots">
+          {banners.map((_, i) => (
+            <span
+              key={i}
+              className={`dot ${currentSlide === i ? "active" : ""}`}
+              onClick={() => setCurrentSlide(i)}
+            />
+          ))}
+          </div>
+      </div>
+    </section>
+
+      {/* ===== SECTION: ETALASE PRODUK ===== */}
+      <section className="home-products">
+        <h2>Etalase Produk</h2>
+
+        <div className="product-grid">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+            <div className="product-card" key={item}>
+              <img
+                src="https://via.placeholder.com/200"
+                alt="Produk"
+                className="product-image"
+              />
+
+              <div className="product-info">
+                <h3 className="product-name">Nama Produk</h3>
+                <p className="product-price">Rp 80.000</p>
+                <p className="product-seller">Toko Barkas Jaya</p>
+              </div>
+
+              <button className="btn-add-cart">
+                + Keranjang
+              </button>
+            </div>
+          ))}
+        </div>
       </section>
 
-      {/* MULAI JUAL (SELLER FLOW) */}
-      <div className="promo">
-        <Link to="/seller/register" className="promo-btn">
-          Ingin Promosikan Barang Anda?
-        </Link>
-      </div>
-    </main>
+      {/* ===== FOOTER ===== */}
+      <footer className="home-footer">
+
+        {/* === FOOTER CTA === */}
+        <div className="footer-cta">
+          <h2>Ingin Mempromosikan Barang Anda?</h2>
+          <p>Daftarkan toko Anda dan mulai berjualan sekarang di Barang Bekas Jogja</p>
+
+          <Link to="/seller/register">
+            <button className="btn-cta">
+              Daftar Jadi Seller
+            </button>
+          </Link>
+        </div>
+
+        {/* === FOOTER INFO === */}
+        <div className="footer-info">
+
+          {/* CONTACT US */}
+          <div className="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Email: support@barangbekasjogja.id</p>
+            <p>WhatsApp: +62 812-3456-7890</p>
+            <p>Alamat: Yogyakarta, Indonesia</p>
+          </div>
+
+          {/* BRAND / ABOUT */}
+          <div className="footer-brand">
+            <h3>Barang Bekas Jogja</h3>
+            <p>
+              Platform jual beli barang bekas terpercaya
+              untuk mendukung gaya hidup berkelanjutan.
+            </p>
+          </div>
+
+        </div>
+
+        {/* === COPYRIGHT === */}
+        <div className="footer-copy">
+          <p>© 2026 Barang Bekas Jogja. All rights reserved.</p>
+        </div>
+
+      </footer>
+    </div>
   );
 }

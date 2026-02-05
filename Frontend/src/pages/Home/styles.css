@@ -1,0 +1,298 @@
+/* ===============================
+   HOME PAGE BASE
+================================ */
+.home-page {
+  padding: 24px;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* ===============================
+   SECTION TITLE
+================================ */
+.home-page h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* ===== HIGHLIGHT SLIDER ===== */
+.highlight {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: 20px 0 40px;
+}
+
+.highlight-track {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+}
+
+.highlight-slide {
+  min-width: 100%;
+  height: 300px; /* landscape */
+}
+
+.highlight-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* DOTS */
+.highlight-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #d1d5db;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dot.active {
+  background: #2f855a;
+}
+
+
+/* ===============================
+   HIGHLIGHT SLIDER (IMAGE ONLY)
+================================ */
+.home-slider {
+  margin-bottom: 56px;
+}
+
+.slider-container {
+  width: 100%;
+  overflow: hidden;   
+  position: relative;
+}
+
+.slider-track {
+  display: flex;                /* 🔑 bikin sejajar */
+  transition: transform 0.6s ease-in-out;
+}
+
+.slider-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* CARD BANNER */
+.slider-card {
+  min-width: 100%;              /* 🔑 INI KUNCINYA */
+  height: 500px;                /* boleh kamu ubah */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* IMAGE */
+.slider-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;            /* biar landscape & rapi */
+  border-radius: 16px;
+}
+
+/* DOT INDICATOR */
+.slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #d1d5db;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #16a34a;
+  transform: scale(1.2);
+}
+
+/* ===============================
+   ETALASE PRODUK
+================================ */
+.home-products {
+  margin-bottom: 56px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.product-image {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.product-price {
+  font-size: 14px;
+  color: #16a34a;
+  margin: 4px 0;
+}
+
+.product-seller {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.btn-add-cart {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #16a34a;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-add-cart:hover {
+  background: #15803d;
+}
+
+/* ===============================
+   FOOTER 
+================================ */
+
+.home-footer {
+  background-color: #f4f8f3;
+  padding: 60px 24px 20px;
+  margin-top: 80px;
+  border-top: 1px solid #d1e3d0;
+}
+
+/* CTA SECTION */
+.footer-cta {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.footer-cta h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.footer-cta p {
+  color: #4b5563;
+  margin-bottom: 20px;
+}
+
+.btn-cta {
+  background-color: #2f855a;
+  color: #ffffff;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-cta:hover {
+  background-color: #276749;
+}
+
+/* FOOTER INFO SECTION */
+.footer-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+  max-width: 1100px;
+  margin: 0 auto 32px;
+}
+
+.footer-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.footer-info p {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+/* === COPYRIGHT === */
+.footer-copy {
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid #d1e3d0;
+}
+
+.footer-copy p {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.home-cta {
+  background: #16a34a;
+  color: white;
+  padding: 36px 24px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.home-cta h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.home-cta p {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.btn-cta {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  color: #16a34a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cta:hover {
+  background: #ecfdf5;
+}

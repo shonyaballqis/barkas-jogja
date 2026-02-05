@@ -1,143 +1,139 @@
 import { useEffect, useState } from "react";
 import "../Dashboard/dashboard.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../api";
 
-export default function SellerEditProduct() {
+export default function SellerProducts() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const sellerName = user?.name || "Seller";
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [images, setImages] = useState([]);
-
-  // ===== GET DETAIL PRODUK =====
-useEffect(() => {
-  const fetchDetail = async () => {
+  const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/products/${id}`, {
+      const res = await fetch(`${API_URL}/api/products/seller`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       const data = await res.json();
-      console.log("DETAIL PRODUCT:", data);
+      setProducts(Array.isArray(data) ? data : data.products || []);
+    } catch (err) {
+      console.error("Gagal ambil produk", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Yakin hapus produk ini?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (res.ok) {
-        const product = data; // 🔥 PENTING
-
-        setName(product.name);
-        setDescription(product.description || "");
-        setPrice(product.price);
-        setStock(product.stock);
+        fetchProducts();
+      } else {
+        alert("Gagal hapus produk");
       }
     } catch (err) {
-      console.error("Gagal ambil detail produk", err);
+      console.error(err);
     }
   };
 
-  fetchDetail();
-}, [id, token]);
-
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 5) {
-      alert("Maksimal 5 gambar");
-      return;
-    }
-    setImages(files);
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
-  // ===== UPDATE PRODUCT =====
- const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("description", description);
-  formData.append("price", price);
-  formData.append("stock", stock);
-
-  images.forEach((img) => {
-    formData.append("images", img);
-  });
-
-  try {
-    const res = await fetch(`${API_URL}/api/products/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (res.ok) {
-      alert("Produk berhasil diupdate");
-      navigate("/seller/dashboard");
-    } else {
-      const err = await res.json();
-      alert(err.message || "Gagal update produk");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
-  }
-};
   return (
     <div className="seller-layout">
       {/* TOPBAR */}
       <header className="topbar">
-        <h3>Edit Product</h3>
-        <div className="avatar">S</div>
+        <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
+          ☰
+        </button>
+        <h3>My Products</h3>
+        <div className="avatar">
+          {sellerName.charAt(0).toUpperCase()}
+        </div>
       </header>
 
+      {/* SIDEBAR */}
+      {sidebarOpen && (
+        <aside className="sidebar">
+          <div className="sidebar-header">
+            <h4>Menu</h4>
+            <button onClick={() => setSidebarOpen(false)}>✕</button>
+          </div>
+
+          <ul>
+            <li onClick={() => navigate("/seller/dashboard")}>
+              Dashboard
+            </li>
+            <li onClick={() => navigate("/seller/upload")}>
+              Upload Product
+            </li>
+            <li className="active">My Products</li>
+            <li onClick={handleLogout}>Logout</li>
+          </ul>
+        </aside>
+      )}
+
+      {/* CONTENT */}
       <main className="content">
-        <h1>Edit Product</h1>
-        <p className="subtitle">Perbarui data produk</p>
+        <h1>My Products</h1>
+        <p className="subtitle">Daftar produk yang kamu jual</p>
 
-        <div className="card" style={{ maxWidth: 600 }}>
-          <form onSubmit={handleSubmit} className="form upload-form">
-            <label>Nama Produk</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} />
+        <div className="product-grid">
+          {products.length === 0 ? (
+            <p>Belum ada produk</p>
+          ) : (
+            products.map((p) => (
+              <div className="product-card" key={p.product_id}>
+                <img
+                  src={
+                    p.image_url
+                      ? `${API_URL}${p.image_url}`
+                      : "/no-image.png"
+                  }
+                  alt={p.name}
+                  className="product-image"
+                />
 
-            <label>Deskripsi</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+                <h4>{p.name}</h4>
+                <p className="price">Rp {p.price}</p>
 
-            <label>Harga</label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
+                <div className="actions">
+                  <button
+                    onClick={() =>
+                      navigate(`/seller/products/edit/${p.product_id}`)
+                    }
+                  >
+                    Edit
+                  </button>
 
-            <label>Stock</label>
-            <input
-              type="number"
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
-            />
-
-            <label>Gambar Baru (opsional, max 5)</label>
-            <input type="file" multiple onChange={handleImageChange} />
-
-            <div className="actions">
-              <button className="primary" type="submit">
-                Update Produk
-              </button>
-
-              <button type="button" onClick={() => navigate(-1)}>
-                Batal
-              </button>
-            </div>
-          </form>
+                  <button
+                    className="danger"
+                    onClick={() => handleDelete(p.product_id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </main>
     </div>
