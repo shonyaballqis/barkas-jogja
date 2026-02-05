@@ -129,7 +129,7 @@ export default function SellerDashboard() {
                 : "/no-image.png"
             }
             alt={p.name}
-            className="product-image"
+            className="product-images"
           />
 
           <h4>{p.name}</h4>
